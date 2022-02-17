@@ -5,9 +5,10 @@ import scipy.stats as stats
 
 def MyNPV(Q,P,V,F,A,T,r,n,S,I):
     res = 0.0
-    for t in range(int(n)):
-        res += ((Q*(P-V)-F-A)*(1-T) + A) / ((1+r)**t)
-    return res + S/((1+r)**n) - I
+    div = (Q*(P-V)-F-A)*(1-T) + A
+    for t in range(1, int(n+1)):
+        res += div/((1+r)**(t))
+    return res + (S/((1+r)**n)) - I
 
 #def R(Q,P,V,F,A):
 #    return (Q*(P-V))-F-A
@@ -36,6 +37,7 @@ Ydf = pd.read_csv('Y.csv', delimiter=',')
 
 print('1) Чистая приведенная стоимость инвестиций')
 
+#3,900,000
 for index, x in Xdf.iterrows():
     npv = MyNPV(x['Q'], x['P'], x['V'], x['F'], x['A'],
                 x['T'], x['r'], x['n'], x['S'], x['I'])
@@ -96,7 +98,7 @@ print(f'Чувствительность проекта Y по объему вы
 Xp = float(Xs['P'])
 pnpv = 0.0
 while True:
-    npv = MyNPV(float(Xs['P']), Xp, float(Xs['V']), float(Xs['F']), float(Xs['A']),
+    npv = MyNPV(float(Xs['Q']), Xp, float(Xs['V']), float(Xs['F']), float(Xs['A']),
                 float(Xs['T']), float(Xs['r']), float(Xs['n']), float(Xs['S']), float(Xs['I']))
     if npv < 0:
         Xp += 500
@@ -109,7 +111,7 @@ print(f'Чувствительность проекта X по цене за ш�
 Yp = float(Ys['P'])
 pnpv = 0.0
 while True:
-    npv = MyNPV(float(Ys['P']), Yp, float(Ys['V']), float(Ys['F']), float(Ys['A']),
+    npv = MyNPV(float(Ys['Q']), Yp, float(Ys['V']), float(Ys['F']), float(Ys['A']),
                 float(Ys['T']), float(Ys['r']), float(Ys['n']), float(Ys['S']), float(Ys['I']) / N)
     if npv < 0:
         Yp += 5000
@@ -120,8 +122,8 @@ while True:
 print(f'Чувствительность проекта Y по цене за штуку: {Yp}, npv: {round(pnpv, 2)}')
 
 print('4) Доходность')
-print(f'Вероятность доходности <5000 для проекта X {stats.norm.pdf(Z(Xdf))}')
-print(f'Вероятность доходности <5000 для проекта Y {stats.norm.pdf(Z(Ydf))}')
+print(f'Вероятность доходности <5000 для проекта X {stats.norm.cdf(Z(Xdf))}')
+print(f'Вероятность доходности <5000 для проекта Y {stats.norm.cdf(Z(Ydf))}')
 
 print('5) Доходность')
 npv = -1.0
@@ -137,6 +139,7 @@ npv = -1.0
 years = 0
 while npv < 0:
     years+=1
+    #print(npv, years)
     npv = MyNPV(float(Ys['Q']), float(Ys['P']), float(Ys['V']), float(Ys['F']), float(Ys['A']),
                 float(Ys['T']), float(Ys['r']), years, float(Ys['S']), float(Ys['I']) / N)
 
