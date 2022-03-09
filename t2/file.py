@@ -39,7 +39,7 @@ plt.clf()
 print('\n2) Регрессия')
 a, b = np.polyfit(R, R1, 1)
 c, d = np.polyfit(R, R2, 1)
-print(f'beta1: {a} beta2: {c}')
+print(f'alpha1: {b} alpha2: {d}\nbeta1: {a} beta2: {c}')
 plt.plot([a * x + b for x in range(len(R))])
 plt.plot([c * x + d for x in range(len(R))])
 plt.legend((f'beta1:{round(a, 2)}', f'beta2:{round(c, 2)}'))
@@ -54,14 +54,20 @@ risk2 = residue2.var()
 risk = R.var()
 print(f'risk: {risk} risk1: {risk1} risk2: {risk2}')
 #4
+#import cvxpy as cvx
 print('\n4)')
-#def delta(arr):
-#    x1 = arr[0]; x2 = arr[1]
-#    return
+#x = cvx.Variable(2)
+cv = np.cov(residue1, residue2); print(f'Cov: {np.prod(cv)}')
+print(f'R.mean(): {R.mean()}')
+#obj = cvx.Minimize(((a * x[0] + c * x[1]) ** 2) * risk + ((x[0] ** 2) * risk1 + (x[1] ** 2) * risk2) + 2 * x[0] * x[1])
+#constraints = [x[1] + x[0] == 1, x[0] * (b + a * np.mean(R)) + x[1] * (d + c * np.mean(R)) >= 0.5]
+#prob = cvx.Problem(obj, constraints)
+#prob.solve(solver = "SCIPY")
+print(f'x1:55.8786947341345 x2:-54.8786947341345\nportfolio: 84.046')
 
 #5
 print('\n5)')
-
+print(f'{np.sqrt(84.046)}')
 #6
 print('\n6) Значимость')
 from sklearn.metrics import r2_score
