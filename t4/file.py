@@ -67,6 +67,7 @@ def pareto(x):
 
 plt.hist(data)
 #plt.show()
+plt.savefig('pareto.png')
 print(stats.kstest(data, pareto))
 
 
@@ -98,6 +99,7 @@ pv = 1 - np.exp(-(1 + chi*((1.1*max(xtrms) - mu)/delta) ** (-1/chi)))
 print(f'prob: {pv}')
 
 print('\n7)')
+
 
 print(f'30 летний уровень стоимости: {mu + delta*((-np.log(1-1/30))**-chi - 1)/chi}')
 
