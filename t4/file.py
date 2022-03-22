@@ -47,7 +47,68 @@ b = (np.sqrt(12*DX) + 2*X) * 0.5
 a = 2*X - b
 print(f'a: {a} b: {b}')
 
+h = (max(data) - min(data)) / 20
+print(f'step h: {h}')
+n = len(data)
+data.sort()
+#print(data)
+intervals = []
+count = 0
+for i in range(20):
+    interval = []
+    while count < n and data[count] < data[0] + h*(i+1):
+        interval.append(data[count])
+        count += 1
+    intervals.append(interval)
+
+F = lambda x: (x - a)/(b - a)
+p = lambda i: F(max(i)) - F(min(i))
+
+chi2 = sum([
+((len(i) - n * p(i)) ** 2) / n * p(i) for i in intervals
+])
+chi2tabl = 27.6
+print(f'chi2: {chi2} chi2 crit: {chi2tabl}')
+if chi2tabl > chi2:
+    print('H0 верна')
+else:
+    print('H0 отвергается')
+
+
 print('\n4)')
+
+a = X; delta = np.sqrt(DX)
+ranges = [
+(a - 3*delta, a - 2*delta),
+(a - 2*delta, a - delta),
+(a - delta, a),
+(a, a + delta),
+(a + delta, a + 2*delta),
+(a + 2*delta, a + 3*delta)
+]
+
+probs = [0.0217, 0.137, 0.34, 0.34, 0.34, 0.137, 0.0217]
+
+intervals = []
+count = 0
+for m, M in ranges:
+    interval = []
+    while count < n and data[count] >= m and data[count] < M:
+        interval.append(data[count])
+        count += 1
+    intervals.append(interval)
+
+chi2 = 0
+for x, i in enumerate(intervals):
+    if len(i) > 0:
+        chi2 += ((len(i) - n*probs[x])**2) / (n * probs[x])
+
+chi2tabl = 7.8
+print(f'chi2: {chi2} chi2 crit: {chi2tabl}')
+if chi2tabl > chi2:
+    print('H0 верна')
+else:
+    print('H0 отвергается')
 
 print('\n5)')
 
